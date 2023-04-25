@@ -1,0 +1,28 @@
+{
+  "name": "aqqwiwng/php-form-validator",
+  "description": "PHP表单验证器",
+  "homepage": "https://github.com/aqqwiwng/php-form-validator",
+  "license": "Apache-2.0",
+  "keywords": [
+    "form",
+    "validator",
+    "validation",
+    "validate",
+    "validation"
+  ],
+  "authors": [
+    {
+      "name": "SmallVillage",
+      "email": "aqqwiwng@qq.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.0.0",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Validator\\": "src/Validator/"
+    }
+  }
+}
