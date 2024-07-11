@@ -2,6 +2,7 @@
   "name": "aqqwiwng/php-form-validator",
   "description": "PHP表单验证器",
   "homepage": "https://github.com/aqqwiwng/php-form-validator",
+  "version": "1.0.0",
   "license": "Apache-2.0",
   "keywords": [
     "form",

@@ -6,7 +6,7 @@ class Utils
 {
     const pattern = [
         'chinese' => '/^[\x{4e00}-\x{9fa5}]+$/u',
-        'email' => '/^\S+?@\S+?\.\S+?$/',
+        'email' => '/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',
         'mobile' => '/^1[3-9]\d{9}$/',
         'weak_password' => '/^[\w!@#$%^&*?]{6,18}$/',
         'password' => '/^(?!^\d+$)(?!^[a-zA-Z]+$)(?!^[!@#$%^&_.*?]+$).{6,18}$/',
@@ -50,7 +50,7 @@ class Utils
      * @param bool $firstUpper
      * @return string
      */
-   public static function snakeToCamel(string $value, bool $firstUpper = false): string
+    public static function snakeToCamel(string $value, bool $firstUpper = false): string
     {
         $value = ucwords(str_replace(['_', '-'], ' ', $value));
         $value = str_replace(' ', '', $value);

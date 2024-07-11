@@ -36,12 +36,13 @@ class ValidateException extends \RuntimeException
     protected string|array $error;
     protected mixed $data;
 
-    public function __construct($error, $data = null)
+    public function __construct($error, $data = null, $code = 401)
     {
         $this->error = $error;
         $this->message = is_array($error) ? implode(PHP_EOL, $error) : $error;
         $this->data = $data;
-        parent::__construct($this->message);
+
+        parent::__construct($this->message,$code);
     }
 
     public function getError(): array|string
@@ -49,7 +50,7 @@ class ValidateException extends \RuntimeException
         return $this->error;
     }
 
-    public function getData():?array
+    public function getData(): ?array
     {
         return $this->data;
     }

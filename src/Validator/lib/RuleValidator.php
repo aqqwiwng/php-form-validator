@@ -15,7 +15,7 @@ class RuleValidator
     {
         $message = new Message($rule);
         if (is_string($rule['required']) && method_exists($this, $rule['required'])) {
-            $res = $this->{$rule['required']}($rule, $value, $data);
+            $res = $this->{$rule['required']}($value, $data);
             $error = $res && Utils::isEmpty($value);
         } else {
             $error = Utils::isEmpty($value);

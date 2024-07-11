@@ -8,7 +8,7 @@ use Validator\lib\Utils;
 
 class Validator extends RuleValidator
 {
-    protected array $rules=[];
+    protected array $rules = [];
     protected bool $batch = false;
     protected bool $failException = true;
     protected array $scene = [];
@@ -16,10 +16,6 @@ class Validator extends RuleValidator
     protected ?array $currentRules = null;
     protected string|array $error = [];
 
-    public function __construct(array $rules = [])
-    {
-        $this->rules = $rules;
-    }
 
     /**
      * 设置验证规则
@@ -48,14 +44,12 @@ class Validator extends RuleValidator
      * @param array $fields
      * @return Validator
      */
-    public function only(array $fields): Validator
+    protected function only(array $fields): Validator
     {
         $this->currentRules = [];
-        foreach ($fields as $key => $item) {
-            if (isset($this->rules[$key])) {
-                $this->currentRules[$key] = $item;
-            } else {
-                $this->currentRules[$key] = [];
+        foreach ($fields as $field) {
+            if (isset($this->rules[$field])) {
+                $this->currentRules[$field] = $this->rules[$field];
             }
         }
         return $this;
@@ -66,7 +60,7 @@ class Validator extends RuleValidator
      * @param string $field 字段名称
      * @param string $ruleName 规则名称
      */
-    public function remove(string $field, string $ruleName): Validator
+    protected function remove(string $field, string $ruleName): Validator
     {
         if (isset($this->currentRules[$field])) {
             $rules = $this->currentRules[$field]['rules'] ?? [];
@@ -87,7 +81,7 @@ class Validator extends RuleValidator
      * @param string $field 字段名称
      * @param array $rule 验证规则
      */
-    public function append(string $field, array $rule): Validator
+    protected function append(string $field, array $rule): Validator
     {
         if (isset($this->currentRules[$field])) {
             $rules = $this->currentRules[$field]['rules'] ?? [];
@@ -185,7 +179,7 @@ class Validator extends RuleValidator
      */
     private function getCurrentRules(): ?array
     {
-        if (!$this->hasScene($this->currentScene)) {
+        if ($this->hasScene($this->currentScene)) {
             $scene = $this->currentScene;
             if (method_exists($this, 'scene' . $scene)) {
                 call_user_func([$this, 'scene' . $scene]);
@@ -203,7 +197,7 @@ class Validator extends RuleValidator
         if (!isset($fieldRule['rules'])) return null;
         $rules = $fieldRule['rules'];
         $label = $fieldRule['label'] ?? "[$fieldKey]";
-        if (!$this->hasRequired($rules) && Utils::isEmpty($value)) {
+        if (!$this->hasRequired($rules,$value, $data) && Utils::isEmpty($value)) {
             return null;
         }
         foreach ($rules as $item) {
@@ -217,16 +211,22 @@ class Validator extends RuleValidator
         return $result;
     }
 
-    private function hasRequired($rules): bool
+    private function hasRequired($rules, $value, $data): bool
     {
-        $result = false;
+        $rule = [];
         foreach ($rules as $item) {
             if (isset($item['required'])) {
-                $result = true;
+                $rule = $item;
                 break;
             }
         }
-        return $result;
+        if (empty($rule)) {
+            return false;
+        }
+        if (is_string($rule['required']) && method_exists($this, $rule['required'])) {
+            return $this->{$rule['required']}($value, $data);
+        }
+        return $rule['required'];
     }
 
     private function getValidateType($rule): ?string
