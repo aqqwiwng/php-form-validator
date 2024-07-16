@@ -33,7 +33,7 @@ class Validator extends RuleValidator
      * @param string $name
      * @return Validator
      */
-    public function scene(string $name): Validator
+    public function setScene(string $name): Validator
     {
         $this->currentScene = $name;
         return $this;
