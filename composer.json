@@ -3,6 +3,7 @@
   "description": "PHP表单验证器",
   "homepage": "https://github.com/aqqwiwng/php-form-validator",
   "license": "Apache-2.0",
+  "type": "library",
   "keywords": [
     "form",
     "validator",
@@ -18,8 +19,10 @@
   ],
   "require": {
     "php": ">=8.0.0",
-    "ext-json": "*"
+    "ext-json": "*",
+    "ext-intl": "*"
   },
+
   "autoload": {
     "psr-4": {
       "Validator\\": "src/Validator/"
