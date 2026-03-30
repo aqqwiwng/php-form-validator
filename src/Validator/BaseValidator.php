@@ -184,8 +184,7 @@ class BaseValidator
         if (!Utils::checkType('string', $value)) {
             return $message->getMessage('type_error');
         }
-        $confirm_field = $rule['confirm_field'];
-        $rule['confirm_label'] ??= "[$confirm_field]";
+        $confirm_field = $rule['confirm'];
         $message->setRule($rule);
         if (!isset($data[$confirm_field])) return $message->getMessage('confirm_not_found');
         if ($data[$confirm_field] !== $value) return $message->getMessage('confirm');

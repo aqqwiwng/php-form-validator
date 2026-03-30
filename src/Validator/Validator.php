@@ -270,30 +270,79 @@ class Validator extends BaseValidator
      */
     private function validateRule(string $fieldKey, array $fieldRule, mixed $value, array $data): ?string
     {
-        // 无规则直接跳过
         if (empty($fieldRule['rules'])) {
             return null;
         }
 
         $label = $fieldRule['label'] ?? "[$fieldKey]";
 
-        // 非必填且空值，跳过后续验证
         if (!$this->isRequired($fieldRule['rules'], $value, $data) && Utils::isEmpty($value)) {
             return null;
         }
 
-        foreach ($fieldRule['rules'] as $ruleItem) {
-            $validateType = $this->getValidateType($ruleItem);
-            if ($validateType === null) {
-                continue;
-            }
+        $rules = $fieldRule['rules'];
+        $fullRule = array_merge($rules, ['label' => $label]);
 
-            $fullRule = array_merge($ruleItem, ['label' => $label]);
-            if (method_exists($this, $validateType)) {
-                $error = $this->$validateType($fullRule, $value, $data);
-                if ($error !== null) {
-                    return $error;
-                }
+        if (isset($rules['required'])) {
+            $error = $this->required($fullRule, $value, $data);
+            if ($error !== null) {
+                return $error;
+            }
+        }
+
+        if (isset($rules['type'])) {
+            $error = $this->type($fullRule, $value, $data);
+            if ($error !== null) {
+                return $error;
+            }
+        }
+
+        if (isset($rules['confirm'])) {
+            $currentRules = $this->getCurrentRules();
+            $confirm_field=$rules['confirm'];
+            $confirmLabel = $currentRules[$confirm_field]['label'] ?? "[$confirm_field]";
+            $fullRule['confirm_label'] = $confirmLabel;
+            $error = $this->confirm($fullRule, $value, $data);
+            if ($error !== null) {
+                return $error;
+            }
+        }
+
+        if (isset($rules['enum'])) {
+            $error = $this->enum($fullRule, $value, $data);
+            if ($error !== null) {
+                return $error;
+            }
+        }
+
+        if (isset($rules['regex'])) {
+            $error = $this->regex($fullRule, $value, $data);
+            if ($error !== null) {
+                return $error;
+            }
+        }
+
+        if (isset($rules['validateFunction'])) {
+            $error = $this->validateFunction($fullRule, $value, $data);
+            if ($error !== null) {
+                return $error;
+            }
+        }
+
+        if (isset($rules['min']) && isset($rules['max'])) {
+            $error = $this->between($fullRule, $value, $data);
+            if ($error !== null) {
+                return $error;
+            }
+        } elseif (isset($rules['min'])) {
+            $error = $this->min($fullRule, $value, $data);
+            if ($error !== null) {
+                return $error;
+            }
+        } elseif (isset($rules['max'])) {
+            $error = $this->max($fullRule, $value, $data);
+            if ($error !== null) {
+                return $error;
             }
         }
 
@@ -307,43 +356,17 @@ class Validator extends BaseValidator
      * @param array $data 全部数据
      * @return bool
      */
-    private function isRequired(array $rules, mixed $value, array $data): bool
+    private function isRequired(array $rules, mixed $value, mixed $data): bool
     {
-        foreach ($rules as $rule) {
-            if (!array_key_exists('required', $rule)) {
-                continue;
-            }
-
-            $required = $rule['required'];
-            if (is_string($required) && method_exists($this, $required)) {
-                return (bool)$this->$required($value, $data);
-            }
-
-            return (bool)$required;
+        if (!isset($rules['required'])) {
+            return false;
         }
 
-        return false;
-    }
+        $required = $rules['required'];
+        if (is_string($required) && method_exists($this, $required)) {
+            return (bool)$this->$required($value, $data);
+        }
 
-    /**
-     * 根据规则数组返回对应的验证方法名
-     * @param array $rule
-     * @return string|null
-     */
-    private function getValidateType(array $rule): ?string
-    {
-        // 保持优先级顺序，先匹配先返回
-        return match (true) {
-            isset($rule['required']) => 'required',
-            isset($rule['type']) => 'type',
-            isset($rule['confirm']) => 'confirm',
-            isset($rule['enum']) => 'enum',
-            isset($rule['regex']) => 'regex',
-            isset($rule['validateFunction']) => 'validateFunction',
-            (isset($rule['min']) && isset($rule['max'])) => 'between',
-            isset($rule['min']) => 'min',
-            isset($rule['max']) => 'max',
-            default => null,
-        };
+        return (bool)$required;
     }
 }
