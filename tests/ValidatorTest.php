@@ -59,23 +59,23 @@ class ValidatorTest {
             'username' => [
                 'label' => '用户名',
                 'rules' => [
-                    ['required' => true],
-                    ['type' => 'string'],
-                    ['regex' => '/^[a-zA-Z][a-zA-Z0-9_]{5,19}$/']
+                    'required' => true,
+                    'type' => 'string',
+                    'regex' => '/^[a-zA-Z][a-zA-Z0-9_]{5,19}$/'
                 ]
             ],
             'email' => [
                 'label' => '邮箱',
                 'rules' => [
-                    ['required' => true],
-                    ['type' => 'email']
+                    'required' => true,
+                    'type' => 'email'
                 ]
             ],
             'password' => [
                 'label' => '密码',
                 'rules' => [
-                    ['required' => true],
-                    ['type' => 'strong_pwd']
+                    'required' => true,
+                    'type' => 'strong_pwd'
                 ]
             ]
         ]);
@@ -146,16 +146,16 @@ class ValidatorTest {
             'username' => [
                 'label' => '用户名',
                 'rules' => [
-                    ['required' => true],
-                    ['type' => 'string'],
-                    ['regex' => '/^[a-zA-Z][a-zA-Z0-9_]{5,19}$/']
+                    'required' => true,
+                    'type' => 'string',
+                    'regex' => '/^[a-zA-Z][a-zA-Z0-9_]{5,19}$/'
                 ]
             ],
             'email' => [
                 'label' => '邮箱',
                 'rules' => [
-                    ['required' => true],
-                    ['type' => 'email']
+                    'required' => true,
+                    'type' => 'email'
                 ]
             ]
         ]);
@@ -195,29 +195,29 @@ class ValidatorTest {
             'username' => [
                 'label' => '用户名',
                 'rules' => [
-                    ['required' => true],
-                    ['type' => 'string']
+                    'required' => true,
+                    'type' => 'string'
                 ]
             ],
             'email' => [
                 'label' => '邮箱',
                 'rules' => [
-                    ['required' => true],
-                    ['type' => 'email']
+                    'required' => true,
+                    'type' => 'email'
                 ]
             ],
             'password' => [
                 'label' => '密码',
                 'rules' => [
-                    ['required' => true],
-                    ['type' => 'strong_pwd']
+                    'required' => true,
+                    'type' => 'strong_pwd'
                 ]
             ],
             'confirm_password' => [
                 'label' => '确认密码',
                 'rules' => [
-                    ['required' => true],
-                    ['confirm_field' => 'password']
+                    'required' => true,
+                    'confirm' => 'password'
                 ]
             ]
         ]);
@@ -269,8 +269,8 @@ class ValidatorTest {
             'email' => [
                 'label' => '邮箱',
                 'rules' => [
-                    ['required' => true],
-                    ['type' => 'email']
+                    'required' => true,
+                    'type' => 'email'
                 ]
             ]
         ]);
@@ -308,16 +308,17 @@ class ValidatorTest {
             'age' => [
                 'label' => '年龄',
                 'rules' => [
-                    ['required' => true],
-                    ['type' => 'int'],
-                    ['min' => 18,'max' => 100]
+                    'required' => true,
+                    'type' => 'int',
+                    'min' => 18,
+                    'max' => 100
                 ]
             ],
             'username' => [
                 'label' => '用户名',
                 'rules' => [
-                    ['required' => true],
-                    ['regex' => '/^[a-zA-Z][a-zA-Z0-9_]{5,19}$/']
+                    'required' => true,
+                    'regex' => '/^[a-zA-Z][a-zA-Z0-9_]{5,19}$/'
                 ]
             ]
         ]);
@@ -384,8 +385,8 @@ class ValidatorTest {
             'age' => [
                 'label' => '年龄',
                 'rules' => [
-                    ['required' => true],
-                    ['validateFunction' => 'validateAge']
+                    'required' => true,
+                    'validateFunction' => 'validateAge'
                 ]
             ]
         ]);
@@ -419,15 +420,15 @@ class ValidatorTest {
             'name' => [
                 'label' => '姓名',
                 'rules' => [
-                    ['required' => true],
-                    ['type' => 'string']
+                    'required' => true,
+                    'type' => 'string'
                 ]
             ],
             'phone' => [
                 'label' => '电话',
                 'rules' => [
-                    ['required' => false],
-                    ['type' => 'mobile']
+                    'required' => false,
+                    'type' => 'mobile'
                 ]
             ]
         ]);
