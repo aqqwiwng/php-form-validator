@@ -333,6 +333,89 @@ $validator->scene('register');
 $validator->check($registerData);
 ```
 
+### 自定义验证器,包含函数定义验证场景，自定义验证函数
+```php
+<?php
+
+namespace app\admin\validate;
+
+use think\facade\Cache;
+use Validator\Validator;
+
+class AdminValidate extends Validator
+{
+
+    protected array $rules = [
+        'username' => [
+            'label' => '用户名',
+            'rules' => [
+                'required' => true,
+                'regex' => '/^[a-zA-Z][a-zA-Z0-9_]{5,18}$/'
+            ],
+        ],
+        'nickname' => [
+            'rules' => [
+                'required' => true,
+                'validator' => 'checkNickname',
+            ],
+            'label' => '管理员昵称'
+        ],
+        'password' => [
+            'label' => '密码',
+            'rules' => [
+                'required' => true,
+                'type' => 'pwd'
+            ],
+        ],
+        'confirm_password' => [
+            'rules' => [
+                'required' => true,
+                'confirm' => 'password'
+            ],
+            'label' => '确认密码'
+        ],
+        'mobile' => [
+            'rules' => [
+                'required' => true,
+                'type' => 'mobile'
+            ],
+            'label' => '手机号'
+        ]
+    ];
+    protected array $scenes = [
+        'pwd' => ['password', 'confirm_password'],
+        'create' => ['username', 'password', 'nickname', 'mobile', 'status'],
+        'update' => ['id','nickname', 'mobile']
+    ];
+
+    // 登录场景
+    protected function scene_login(): void
+    {
+        $this->only(['username', 'password'])
+            ->remove('username', 'regex')
+            ->remove('password', 'type')
+            ->append('token', ['validator' => 'checkCaptchaToken']);
+    }
+
+    protected function checkNickname($value): bool
+    {
+        return str_contains($value, '超级管理员') ? '管理员昵称不能包含“超级管理员”' : true;
+    }
+
+    protected function checkCaptchaToken($value): string|bool
+    {
+        $cacheKey = $value . get_device_id();
+        $captcha = Cache::get($cacheKey);
+        if (!$captcha) {
+            return '验证码已过期';
+        }
+        Cache::delete($cacheKey);
+        return true;
+    }
+}
+
+```
+
 ### 多语言支持
 
 ```php

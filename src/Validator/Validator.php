@@ -206,13 +206,9 @@ class Validator extends BaseValidator
             return $this;
         }
 
-        // 使用 array_filter 一次性剔除匹配规则，避免遍历中 unset 与即时 reindex
-        $this->currentRules[$field]['rules'] = array_values(
-            array_filter(
-                $this->currentRules[$field]['rules'],
-                fn($rule) => !array_key_exists($ruleName, $rule)
-            )
-        );
+        // 删除指定规则名称的规则项
+        unset($this->currentRules[$field]['rules'][$ruleName]);
+
         return $this;
     }
 
@@ -228,7 +224,7 @@ class Validator extends BaseValidator
             $this->currentRules[$field] = ['rules' => []];
         }
         // 追加规则
-        $this->currentRules[$field]['rules'][] = $rule;
+        $this->currentRules[$field]['rules'] = array_merge($this->currentRules[$field]['rules'], $rule);
         return $this;
     }
 

@@ -24,11 +24,40 @@ use Validator\Validator;
 
 // 自定义验证器类，用于测试继承扩展
 class CustomValidator extends Validator {
+    protected array $rules = ['username' => [
+                'label' => '用户名',
+                'rules' => [
+                    'required' => true,
+                    'type' => 'string',
+                    'regex' => '/^[a-zA-Z][a-zA-Z0-9_]{5,19}$/'
+                ]
+            ],
+            'email' => [
+                'label' => '邮箱',
+                'rules' => [
+                    'required' => true,
+                    'type' => 'email'
+                ]
+            ],
+            'password' => [
+                'label' => '密码',
+                'rules' => [
+                    'required' => true,
+                    'type' => 'strong_pwd'
+                ]
+            ]
+        ];
     protected function validateAge(array $rule, mixed $value, mixed $data): ?string {
         if ($value < 18 || $value > 100) {
             return $rule['label'] . '必须在18-100岁之间';
         }
         return null;
+    }
+    public function scene_login()
+    {
+        $this->only(['username', 'password'])
+        ->remove('username','regex')
+        ->append('token',['type'=>'string']);
     }
 }
 
@@ -453,7 +482,31 @@ class ValidatorTest {
         echo "测试：提供姓名，提供无效电话：" . ($result3 ? "❌ 通过" : "✅ 失败") . "\n";
         $this->assertFalse($result3, "空值处理：非必填字段提供无效值验证通过");
     }
-    
+
+    public function testCustomValidationScene() {
+        echo "\n=== 测试用例8：自定义验证场景测试 ===\n";
+
+        $customValidator = new CustomValidator();
+
+
+        $customValidator->failException(false);
+
+        // 测试登录场景
+        $customValidator->scene('login');
+
+        $validLoginData = ['username' => 'admin', 'password' => 'Oxddh@1qqES23456','token' => 'jdkjakjd'];
+        $resultValid = $customValidator->check($validLoginData);
+        echo "测试有效登录：" . ($resultValid ? "✅ 通过" : "❌ 失败") . "\n";
+        $this->assertTrue($resultValid, "自定义验证：有效登录验证失败");
+
+        // 测试无效登录场景
+        $invalidLoginData = ['username' => 'admin', 'password' => '123456','token' => '6dkjakjd'];
+        $resultInvalid = $customValidator->check($invalidLoginData);
+        $error = $customValidator->getError();
+        echo "测试无效年龄：" . ($resultInvalid ? "❌ 通过" : "✅ 失败") . "\n";
+        echo "错误信息：$error\n";
+        $this->assertFalse($resultInvalid, "自定义验证：无效登录验证通过");
+    }
     /**
      * 断言函数：检查条件是否为真
      */
@@ -537,6 +590,9 @@ class ValidatorTest {
         $this->setUp();
         $this->testEmptyValueHandling();
         
+        $this->setUp();
+        $this->testCustomValidationScene();
+
         // 计算测试时间
         $endTime = microtime(true);
         $executionTime = number_format($endTime - $startTime, 4);
