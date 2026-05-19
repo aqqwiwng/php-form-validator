@@ -12,7 +12,7 @@ class ValidateException extends \RuntimeException
     protected string|array $error;
     protected mixed $data;
 
-    public function __construct($error, $data = null, $code = 400)
+    public function __construct($error, $data = null, $code = 422)
     {
         $this->error = $error;
         $this->message = is_array($error) ? implode(PHP_EOL, $error) : $error;
